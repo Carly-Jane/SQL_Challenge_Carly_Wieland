@@ -90,13 +90,26 @@ REFERENCES "employees" ("emp_no");
 -- Once you have a complete database, do the following:
 
 -- List the following details of each employee: employee number, last name, first name, sex, and salary.
-SELECT emp_no, last_name, first_name, sex, salary
-FROM complete_employee_database;
+CREATE VIEW employee_details_view AS
+SELECT employees.emp_no, 
+		employees.last_name, 
+		employees.first_name, 
+		employees.sex, salary
+FROM employees
+INNER JOIN salaries ON
+employees.emp_no = salaries.emp_no;
+
+SELECT *
+FROM employee_details_view;
 
 -- List first name, last name, and hire date for employees who were hired in 1986.
+CREATE VIEW nineteeneightysix_hires AS
 SELECT first_name, last_name, hire_date
-FROM complete_employee_database
+FROM employees
 WHERE hire_date LIKE '%1986';
+
+SELECT *
+FROM nineteeneightysix_hires;
 
 -- List the manager of each department with the following information: department number, department name, the manager's employee number, last name, first name.
 SELECT dept_no, dept_name, emp_no, last_name, first_name
