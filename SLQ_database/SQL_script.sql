@@ -1,61 +1,89 @@
--- create a table for the departments csv.
-create table departments (
-	dept_no varchar,
-	dept_name varchar
+CREATE TABLE "departments" (
+    "dept_no"  varchar  NOT NULL,
+    "dept_name" varchar   NOT NULL,
+    CONSTRAINT "pk_departments" PRIMARY KEY (
+        "dept_no"
+     )
 );
+SELECT *
+FROM departments;
 
-select * from departments
-
-
--- create a table for the dept_emp csv.
-create table dept_emp (
-	emp_no int,
-	dept_no varchar
+CREATE TABLE "titles" (
+    "title_id"  varchar  NOT NULL,
+    "title" varchar   NOT NULL,
+    CONSTRAINT "pk_titles" PRIMARY KEY (
+        "title_id"
+     )
 );
+SELECT *
+FROM titles;
 
-select * from dept_emp
-
-
--- create a table for the dept_manager csv.
-create table dept_manager (
-	dept_no varchar,
-	emp_no int
+CREATE TABLE "employees" (
+    "emp_no"  SERIAL  NOT NULL,
+    "emp_title_id" varchar   NOT NULL,
+    "birth_date" varchar	NOT NULL,
+    "first_name" varchar   NOT NULL,
+    "last_name" varchar   NOT NULL,
+    "sex" varchar   NOT NULL,
+    "hire_date" varchar   NOT NULL,
+    CONSTRAINT "pk_employees" PRIMARY KEY (
+        "emp_no"
+     )
 );
+SELECT *
+FROM employees;
 
-select * from dept_manager
-
-
--- create a table for the employees csv.
-create table employees (
-	emp_no int,
-	emp_title_id varchar,
-	birth_date varchar,
-	first_name varchar,
-	last_name varchar,
-	sex varchar,
-	hire_date varchar
+CREATE TABLE "salaries" (
+    "emp_no"  SERIAL  NOT NULL,
+    "salary" int   NOT NULL,
+    CONSTRAINT "pk_salaries" PRIMARY KEY (
+        "emp_no"
+     )
 );
+SELECT *
+FROM salaries;
 
-select * from employees
-
-
--- create a table for the salaries csv.
-create table salaries (
-	emp_no int,
-	salary int
+CREATE TABLE "dept_emp" (
+    "dept_no" varchar   NOT NULL,
+    "emp_no" varchar   NOT NULL,
+    CONSTRAINT "pk_dept_emp" PRIMARY KEY (
+        "dept_no","emp_no"
+     )
 );
+SELECT *
+FROM dept_emp;
 
-select * from salaries
-
-
--- create a table for the titles csv.
-create table titles (
-	title_id varchar,
-	title varchar
+CREATE TABLE "dept_manager" (
+    "dept_no" varchar   NOT NULL,
+    "emp_no" int   NOT NULL,
+    CONSTRAINT "pk_dept_manager" PRIMARY KEY (
+        "dept_no","emp_no"
+     )
 );
+SELECT *
+FROM dept_manager;
 
-select * from titles
+ALTER TABLE "employees" ADD CONSTRAINT "fk_employees_emp_title_id" FOREIGN KEY("emp_title_id")
+REFERENCES "titles" ("title_id");
 
+ALTER TABLE "salaries" ADD CONSTRAINT "fk_salaries_emp_no" FOREIGN KEY("emp_no")
+REFERENCES "employees" ("emp_no");
+
+-- ERROR:  insert or update on table "dept_emp" violates foreign key constraint "fk_dept_emp_dept_no"
+-- DETAIL:  Key (dept_no)=(10001) is not present in table "departments".
+ALTER TABLE "dept_emp" ADD CONSTRAINT "fk_dept_emp_dept_no" FOREIGN KEY("dept_no")
+REFERENCES "departments" ("dept_no");
+
+-- ERROR:  foreign key constraint "fk_dept_emp_emp_no" cannot be implemented
+-- DETAIL:  Key columns "emp_no" and "emp_no" are of incompatible types: character varying and integer.
+ALTER TABLE "dept_emp" ADD CONSTRAINT "fk_dept_emp_emp_no" FOREIGN KEY("emp_no")
+REFERENCES "employees" ("emp_no");
+
+ALTER TABLE "dept_manager" ADD CONSTRAINT "fk_dept_manager_dept_no" FOREIGN KEY("dept_no")
+REFERENCES "departments" ("dept_no");
+
+ALTER TABLE "dept_manager" ADD CONSTRAINT "fk_dept_manager_emp_no" FOREIGN KEY("emp_no")
+REFERENCES "employees" ("emp_no");
 
 
 -- Data Analysis
@@ -97,3 +125,47 @@ WHERE dept_name = "Sales"
 OR dept_name = "Development" 
 
 -- In descending order, list the frequency count of employee last names, i.e., how many employees share each last name.
+
+
+
+
+
+-- departments
+-- -----
+-- dept_no PK varchar IDENTITY 
+-- dept_name varchar 
+
+
+-- titles
+-- -----
+-- title_id PK varchar IDENTITY 
+-- title varchar
+
+
+-- employees
+-- -----
+-- emp_no PK int IDENTITY
+-- emp_title_id varchar FK -< titles.title_id
+-- birth_date varchar,
+-- first_name varchar,
+-- last_name varchar,
+-- sex varchar,
+-- hire_date varchar
+
+
+-- salaries
+-- -----
+-- emp_no PK int IDENTITY FK - employees.emp_no
+-- salary int
+
+
+-- dept_emp
+-- -----
+-- dept_no PK varchar FK >- departments.dept_no
+-- emp_no PK int FK >- employees.emp_no
+
+
+-- dept_manager
+-- -----
+-- dept_no PK varchar FK >- departments.dept_no
+-- emp_no PK int FK >- employees.emp_no
