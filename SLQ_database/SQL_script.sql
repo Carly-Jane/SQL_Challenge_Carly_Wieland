@@ -141,13 +141,60 @@ FROM Department_Managers;
 
 -- CREATE VIEW Employee_And_Department AS
 SELECT employees.emp_no, 
-		employees.last_name, 
-		employees.first_name, 
-		dept_no
-FROM employees
-INNER JOIN dept_emp ON
-employees.emp_no = dept_emp.emp_no;
 
+-- List the department of each employee with the following information: employee number, last name, first name, and department name.
+
+
+-- -- CREATE VIEW Employee_And_Department AS
+-- SELECT dept_emp.dept_no,
+-- 		departments.dept_name,
+-- 		dept_emp.emp_no
+-- FROM dept_emp
+-- FULL OUTER JOIN departments ON
+-- dept_emp.dept_no = departments.dept_no;
+
+
+-- SELECT *
+-- FROM Employee_And_Department;
+
+
+-- SELECT emp_no, first_name, last_name
+-- FROM employees
+-- WHERE emp_no IN
+-- (
+--   SELECT dept_no
+--   FROM dept_emp
+--   WHERE dept_no IN
+--   (
+--     SELECT dept_name
+--     FROM departments
+--   )
+-- );
+
+-- SELECT emp_no, first_name, last_name,
+-- 	(SELECT dept_emp.dept_no
+-- 	 	(SELECT departments.dept_name
+-- 		FROM departments
+-- 		WHERE departments.dept_no = dept_emp.dept_no)
+-- 	FROM dept_emp
+-- 	WHERE dept_emp.emp_no = employees.emp_no)
+-- FROM employees;
+
+
+
+
+-- SELECT dept_name
+-- FROM departments
+-- WHERE dept_no IN
+-- (
+--   SELECT dept_no
+--   FROM dept_emp
+--   WHERE emp_no IN
+--   (
+--     SELECT *
+--     FROM employees
+--   )
+-- );
 
 -- SELECT *
 -- FROM Employee_And_Department;
