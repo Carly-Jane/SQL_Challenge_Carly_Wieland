@@ -111,24 +111,56 @@ WHERE hire_date LIKE '%1986';
 SELECT *
 FROM nineteeneightysix_hires;
 
--- List the manager of each department with the following information: department number, department name, the manager's employee number, last name, first name.
-SELECT dept_no, dept_name, emp_no, last_name, first_name
-FROM complete_employee_database
-WHERE title = Manager;
+-- List the manager of each department with the following information: 
+--department number, department name, the manager's employee number, last name, first name.
+CREATE VIEW department_managers_working_table AS
+SELECT dept_manager.dept_no,
+		dept_name,
+		dept_manager.emp_no
+FROM dept_manager
+INNER JOIN departments ON
+dept_manager.dept_no = departments.dept_no;
+
+SELECT *
+FROM department_managers_working_table;
+
+CREATE VIEW Department_Managers AS
+SELECT department_managers_working_table.dept_no,
+		department_managers_working_table.dept_name,
+		department_managers_working_table.emp_no,
+		last_name, 
+		first_name
+FROM department_managers_working_table
+INNER JOIN employees ON
+department_managers_working_table.emp_no = employees.emp_no;
+
+SELECT *
+FROM Department_Managers;
+
+
 
 -- List the department of each employee with the following information: employee number, last name, first name, and department name.
-SELECT emp_no, last_name, first_name, dept_name
-FROM complete_employee_database
+SELECT employees.emp_no, 
+		last_name.employees, 
+		first_name.employees, 
+		dept_no
+FROM employees
+INNER JOIN dept_emp ON
+employees.emp_no = dept_emp.emp_no;
 
 -- List first name, last name, and sex for employees whose first name is "Hercules" and last names begin with "B."
+CREATE VIEW hercules_b_employees AS
 SELECT first_name, last_name, sex
-FROM complete_employee_database
-WHERE first_name = "Hercules" 
-AND last_name LIKE 'B%'
+FROM employees
+WHERE first_name = 'Hercules'
+AND last_name LIKE 'B%';
+
+SELECT *
+FROM hercules_b_employees;
 
 -- List all employees in the Sales department, including their employee number, last name, first name, and department name.
 SELECT emp_no, last_name, first_name, dept_name
-FROM complete_employee_database
+FROM employees
 WHERE dept_name = "Sales" 
 
 -- List all employees in the Sales and Development departments, including their employee number, last name, first name, and department name.
