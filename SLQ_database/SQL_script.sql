@@ -138,13 +138,19 @@ FROM Department_Managers;
 
 
 -- List the department of each employee with the following information: employee number, last name, first name, and department name.
+
+-- CREATE VIEW Employee_And_Department AS
 SELECT employees.emp_no, 
-		last_name.employees, 
-		first_name.employees, 
+		employees.last_name, 
+		employees.first_name, 
 		dept_no
 FROM employees
 INNER JOIN dept_emp ON
 employees.emp_no = dept_emp.emp_no;
+
+
+-- SELECT *
+-- FROM Employee_And_Department;
 
 -- List first name, last name, and sex for employees whose first name is "Hercules" and last names begin with "B."
 CREATE VIEW hercules_b_employees AS
@@ -157,22 +163,37 @@ SELECT *
 FROM hercules_b_employees;
 
 -- List all employees in the Sales department, including their employee number, last name, first name, and department name.
-SELECT emp_no, last_name, first_name, dept_name
-FROM employees
-WHERE dept_name = "Sales" 
+CREATE VIEW Sales_Department AS
+SELECT *
+FROM Employee_And_Department
+WHERE dept_name = "Sales";
+
+SELECT *
+FROM Sales_Department;
+
 
 -- List all employees in the Sales and Development departments, including their employee number, last name, first name, and department name.
-SELECT emp_no, last_name, first_name, dept_name
-FROM complete_employee_database
+CREATE VIEW Sales_And_Development_Department AS
+SELECT *
+FROM Employee_And_Department
 WHERE dept_name = "Sales" 
-OR dept_name = "Development" 
+OR dept_name = "Development";
+
+SELECT *
+FROM Sales_And_Development_Department;
+
 
 -- In descending order, list the frequency count of employee last names, i.e., how many employees share each last name.
+CREATE VIEW Employee_Last_Names AS
+SELECT last_name, COUNT(last_name) AS "Count Of Employee Last Names"
+FROM employees
+ORDER BY "Count Of Employee Last Names" DESC;
+
+SELECT *
+FROM Employee_Last_Names;
 
 
-
-
-
+------------------------------------------------
 -- departments
 -- -----
 -- dept_no PK varchar IDENTITY 
