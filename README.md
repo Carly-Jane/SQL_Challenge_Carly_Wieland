@@ -1,7 +1,7 @@
 # SQL Homework - Employee Database: A Mystery in Two Parts
 
 
-![03_RDB_diagram.PNG](RDB_diagram.PNG)
+![03_RDB_diagram.PNG](03_RDB_diagram.PNG)
 
 ## Background
 
