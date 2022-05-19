@@ -44,12 +44,13 @@ FROM salaries;
 
 ----- Create 'dept_emp' table.
 CREATE TABLE "dept_emp" (
+	"emp_no" varchar   NOT NULL,
     "dept_no" varchar   NOT NULL,
-    "emp_no" varchar   NOT NULL,
     CONSTRAINT "pk_dept_emp" PRIMARY KEY ("dept_no","emp_no")
 );
 SELECT *
 FROM dept_emp;
+
 
 ----- Create 'dept_manager' table.
 CREATE TABLE "dept_manager" (
@@ -67,13 +68,9 @@ REFERENCES "titles" ("title_id");
 ALTER TABLE "salaries" ADD CONSTRAINT "fk_salaries_emp_no" FOREIGN KEY("emp_no")
 REFERENCES "employees" ("emp_no");
 
--- ERROR:  insert or update on table "dept_emp" violates foreign key constraint "fk_dept_emp_dept_no"
--- DETAIL:  Key (dept_no)=(10001) is not present in table "departments".
 ALTER TABLE "dept_emp" ADD CONSTRAINT "fk_dept_emp_dept_no" FOREIGN KEY("dept_no")
 REFERENCES "departments" ("dept_no");
 
---ERROR:  insert or update on table "dept_emp" violates foreign key constraint "fk_dept_emp_emp_no"
---DETAIL:  Key (emp_no)=(d005) is not present in table "employees".
 ALTER TABLE "dept_emp" ADD CONSTRAINT "fk_dept_emp_emp_no" FOREIGN KEY("emp_no")
 REFERENCES "employees" ("emp_no");
 
@@ -84,6 +81,8 @@ ALTER TABLE "dept_manager" ADD CONSTRAINT "fk_dept_manager_emp_no" FOREIGN KEY("
 REFERENCES "employees" ("emp_no");
 
 
+
+--------------------------------------------------------------------------------------------------------
 -- Data Analysis
 -- Once you have a complete database, do the following:
 
@@ -139,65 +138,30 @@ FROM Department_Managers;
 
 -- List the department of each employee with the following information: employee number, last name, first name, and department name.
 
--- CREATE VIEW Employee_And_Department AS
-SELECT employees.emp_no, 
+CREATE VIEW department_employees_working_table AS
+SELECT dept_emp.dept_no,
+		dept_name,
+		dept_emp.emp_no
+FROM dept_emp
+INNER JOIN departments ON
+dept_emp.dept_no = departments.dept_no;
 
--- List the department of each employee with the following information: employee number, last name, first name, and department name.
-
-
--- -- CREATE VIEW Employee_And_Department AS
--- SELECT dept_emp.dept_no,
--- 		departments.dept_name,
--- 		dept_emp.emp_no
--- FROM dept_emp
--- FULL OUTER JOIN departments ON
--- dept_emp.dept_no = departments.dept_no;
+SELECT *
+FROM department_employees_working_table;
 
 
--- SELECT *
--- FROM Employee_And_Department;
+CREATE VIEW Department_Employees AS
+SELECT department_employees_working_table.emp_no,
+		last_name, 
+		first_name,
+		department_employees_working_table.dept_name
+FROM department_employees_working_table
+INNER JOIN employees ON
+department_employees_working_table.emp_no = employees.emp_no;
 
+SELECT *
+FROM Department_Employees;
 
--- SELECT emp_no, first_name, last_name
--- FROM employees
--- WHERE emp_no IN
--- (
---   SELECT dept_no
---   FROM dept_emp
---   WHERE dept_no IN
---   (
---     SELECT dept_name
---     FROM departments
---   )
--- );
-
--- SELECT emp_no, first_name, last_name,
--- 	(SELECT dept_emp.dept_no
--- 	 	(SELECT departments.dept_name
--- 		FROM departments
--- 		WHERE departments.dept_no = dept_emp.dept_no)
--- 	FROM dept_emp
--- 	WHERE dept_emp.emp_no = employees.emp_no)
--- FROM employees;
-
-
-
-
--- SELECT dept_name
--- FROM departments
--- WHERE dept_no IN
--- (
---   SELECT dept_no
---   FROM dept_emp
---   WHERE emp_no IN
---   (
---     SELECT *
---     FROM employees
---   )
--- );
-
--- SELECT *
--- FROM Employee_And_Department;
 
 -- List first name, last name, and sex for employees whose first name is "Hercules" and last names begin with "B."
 CREATE VIEW hercules_b_employees AS
@@ -209,11 +173,12 @@ AND last_name LIKE 'B%';
 SELECT *
 FROM hercules_b_employees;
 
+
 -- List all employees in the Sales department, including their employee number, last name, first name, and department name.
 CREATE VIEW Sales_Department AS
 SELECT *
-FROM Employee_And_Department
-WHERE dept_name = "Sales";
+FROM Department_Employees
+WHERE dept_name = 'Sales';
 
 SELECT *
 FROM Sales_Department;
@@ -222,9 +187,9 @@ FROM Sales_Department;
 -- List all employees in the Sales and Development departments, including their employee number, last name, first name, and department name.
 CREATE VIEW Sales_And_Development_Department AS
 SELECT *
-FROM Employee_And_Department
-WHERE dept_name = "Sales" 
-OR dept_name = "Development";
+FROM Department_Employees
+WHERE dept_name = 'Sales' 
+OR dept_name = 'Development';
 
 SELECT *
 FROM Sales_And_Development_Department;
@@ -234,49 +199,10 @@ FROM Sales_And_Development_Department;
 CREATE VIEW Employee_Last_Names AS
 SELECT last_name, COUNT(last_name) AS "Count Of Employee Last Names"
 FROM employees
+GROUP BY last_name
 ORDER BY "Count Of Employee Last Names" DESC;
 
 SELECT *
 FROM Employee_Last_Names;
 
-
-------------------------------------------------
--- departments
--- -----
--- dept_no PK varchar IDENTITY 
--- dept_name varchar 
-
-
--- titles
--- -----
--- title_id PK varchar IDENTITY 
--- title varchar
-
-
--- employees
--- -----
--- emp_no PK int IDENTITY
--- emp_title_id varchar FK -< titles.title_id
--- birth_date varchar,
--- first_name varchar,
--- last_name varchar,
--- sex varchar,
--- hire_date varchar
-
-
--- salaries
--- -----
--- emp_no PK int IDENTITY FK - employees.emp_no
--- salary int
-
-
--- dept_emp
--- -----
--- dept_no PK varchar FK >- departments.dept_no
--- emp_no PK int FK >- employees.emp_no
-
-
--- dept_manager
--- -----
--- dept_no PK varchar FK >- departments.dept_no
--- emp_no PK int FK >- employees.emp_no
+----------------------------------------------------------------------
